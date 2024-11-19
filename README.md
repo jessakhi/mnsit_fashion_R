@@ -5,7 +5,7 @@
 This project is part of the TEB2043/TFB2063/TEB2164 Data Science course at Universiti Teknologi PETRONAS. The aim is to apply data science techniques using R programming to analyze and build predictive models based on the MNIST Fashion dataset. The project showcases the end-to-end data science workflow, including data cleaning, exploratory data analysis (EDA), feature engineering, model building, and evaluation.
 
 ## **Dataset Description**
-The **MNIST Fashion dataset** is a replacement for the traditional MNIST handwritten digits dataset. It contains grayscale images of 10 different clothing categories, each represented as a 28x28 pixel image. The dataset is widely used for benchmarking machine learning and deep learning models in image classification tasks.
+The **MNIST Fashion dataset** is a replacement for the traditional MNIST handwritten digits dataset. It contains grayscale images of 10 different clothing categories, each represented as a 28x28 pixel image. 
 
 ### **Dataset Details**
 - **Training Set**: 60,000 images with labels.
@@ -54,13 +54,11 @@ project/
 │   ├── raw/                 # Raw dataset files
 │   └── processed/           # Preprocessed data
 ├── report/                 # Final report and outputs
-│   ├── report.pdf          # R Markdown for the report
+│   ├── report.tex          # latex of the report
 │      
-├── video/                   # Video presentation files
-├── tests/                   # Unit tests for scripts
 ├── README.md                # Project description and structure
 ├── .gitignore               # Ignore unnecessary files
-└── DS_groupnumber.zip       # Final submission package
+└── DS.zip       # Final submission package
 ```
 
 ---
