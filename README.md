@@ -93,7 +93,7 @@ project/
 |------------------|-------------|
 | Jihane Essakhi        | 24004461      |
 | [Name 2]         | [ID 2]      |
-| [Name 3]         | [ID 3]      |
+| Syed Fahim Hussain | 22009863    |
 | [Name 4]         | [ID 4]      |
 
 ---
