@@ -16,30 +16,17 @@ setwd("..")
 train_data <- fread("data/raw/fashion-mnist_train.csv")
 test_data <- fread("data/raw/fashion-mnist_test.csv")
 
-duplicate_count_train <- nrow(train_data) - nrow(unique(train_data))
-duplicate_count_test <- nrow(test_data) - nrow(unique(test_data))
-cat("Number of duplicate rows in train data:", duplicate_count_train, "\n")
-cat("Number of duplicate rows in test data:", duplicate_count_test, "\n")
+
 
 train_data <- train_data %>% distinct()
 test_data <- test_data %>% distinct()
-
-
-na_count_train <- sum(is.na(train_data))
-na_count_test <- sum(is.na(test_data))
-#cat("Number of missing values in train data:", na_count_train, "\n")
-#cat("Number of missing values in test data:", na_count_test, "\n")
-cat("dimensions of train : ", dim(train_data), "\n")
-cat("dimensions of test : ", dim(train_data), "\n")
-
 
 
 train_data <- as.data.frame(lapply(train_data, function(x) as.numeric(x) / 255))
 test_data <- as.data.frame(lapply(test_data, function(x) as.numeric(x) / 255))
 gc()
 
-summary(train_data)
-summary(test_data)
+
 
 
 set.seed(123)
