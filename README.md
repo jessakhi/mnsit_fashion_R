@@ -45,19 +45,20 @@ The dataset can be downloaded using the `keras` library in R or from [Kaggle](ht
 ```plaintext
 project/
 ├── src/                     # Source code
-│   ├── data_prep.R          # Data collection, cleaning, and preprocessing
-│   ├── eda.R                # Exploratory data analysis
-│   ├── modeling.R           # Predictive modeling and evaluation
-│   ├── utils.R              # Helper functions
+│   ├── data_cleaning.R          
+│   ├── eda.R  
+│   ├── feature_engineering.R               
+│   ├── model_building.R     
+│   ├── model_eval.R
 │   └── main.R               # Script to run the entire pipeline
 ├── data/                    # Dataset storage
-│   ├── raw/                 # Raw dataset files
-│   └── processed/           # Preprocessed data
+│   ├── raw/                 
+│   └── processed/           
 ├── report/                 # Final report and outputs
-│   ├── report.tex          # latex of the report
+│   ├── report.tex          
 │      
-├── README.md                # Project description and structure
-├── .gitignore               # Ignore unnecessary files
+├── README.md                
+├── .gitignore              
 └── DS.zip       # Final submission package
 ```
 
