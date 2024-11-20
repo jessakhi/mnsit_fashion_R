@@ -1,0 +1,177 @@
+
+> objects <- c('T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
++              'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot')
+> plot_single_image <- function(data, index) {
++   img <- as.numeric(data[index, -1])  # Exclude the label column
++   img_matrix <- matrix(img, nrow = 28, ncol = 28, byrow = TRUE)
++   label <- objects[as.numeric(data[index, 1]) + 1]  # Adjust for R's 1-based index
++   
++   ggplot() +
++     annotation_raster(t(apply(img_matrix, 2, rev)), xmin = 0, xmax = 28, ymin = 0, ymax = 28) +
++     labs(title = label) +
++     theme_void() +
++     theme(plot.title = element_text(hjust = 0.5, size = 10))
++ }
+> visualize_images_grid <- function(data, n_rows = 2, n_cols = 4) {
++   set.seed(123)  # Ensure reproducibility
++   sampled_indices <- sample(1:nrow(data), n_rows * n_cols)
++   image_plots <- lapply(sampled_indices, function(index) plot_single_image(data, index))
++   do.call(grid.arrange, c(image_plots, nrow = n_rows, ncol = n_cols))
++ }
+> 
+> visualize_images_grid(train_data, n_rows = 2, n_cols = 4)
+Error in rgb(tx, tx, tx, maxColorValue = max) : 
+  color intensity 26, not in [0,1]
+> plot_single_image_no_normalization <- function(data, index) {
++   img <- as.numeric(data[index, -1]) 
++   img_matrix <- matrix(img, nrow = 28, ncol = 28, byrow = TRUE)
++   label <- objects[as.numeric(data[index, 1]) + 1]  
++   grob <- rasterGrob(t(apply(img_matrix, 2, rev)), interpolate = FALSE, 
++                      width = unit(1, "npc"), height = unit(1, "npc"), 
++                      gp = gpar(fill = gray.colors(256)))
++   
++   grid.newpage()
++   grid.draw(grob)
++   grid.text(label, y = unit(-0.05, "npc"), gp = gpar(fontsize = 12))
++ }
+> 
+> visualize_images_grid_no_normalization <- function(data, n_rows = 2, n_cols = 4) {
++   set.seed(123) 
++   sampled_indices <- sample(1:nrow(data), n_rows * n_cols)
++   image_plots <- lapply(sampled_indices, function(index) {
++     img <- as.numeric(data[index, -1])  # Pixel values (0–255)
++     img_matrix <- matrix(img, nrow = 28, ncol = 28, byrow = TRUE)
++     label <- objects[as.numeric(data[index, 1]) + 1]
++     
++     rasterGrob(t(apply(img_matrix, 2, rev)), interpolate = FALSE,
++                gp = gpar(fill = gray.colors(256)),
++                name = label)
++   })
++   
++   grobs <- lapply(image_plots, function(raster) arrangeGrob(raster))
++   grid.arrange(grobs, nrow = n_rows, ncol = n_cols)
++ }
+> 
+> visualize_images_grid_no_normalization(train_data, n_rows = 2, n_cols = 4)
+Error in rgb(tx, tx, tx, maxColorValue = max) : 
+  color intensity 26, not in [0,1]
+7.
+rgb(tx, tx, tx, maxColorValue = max)
+6.
+as.raster.matrix(image)
+5.
+as.raster(image)
+4.
+rasterGrob(t(apply(img_matrix, 2, rev)), interpolate = FALSE,
+gp = gpar(fill = gray.colors(256)), name = label)
+3.
+FUN(X[[i]], ...)
+2.
+lapply(sampled_indices, function(index) {
+img <- as.numeric(data[index, -1])
+img_matrix <- matrix(img, nrow = 28, ncol = 28, byrow = TRUE)
+label <- objects[as.numeric(data[index, 1]) + 1] ...
+1.
+visualize_images_grid_no_normalization(train_data, n_rows = 2,
+n_cols = 4)
+
+> plot_single_image_no_normalization <- function(data, index) {
++   img <- as.numeric(data[index, -1])  # Extract pixel values
++   img_matrix <- matrix(img, nrow = 28, ncol = 28, byrow = TRUE)
++   label <- objects[as.numeric(data[index, 1]) + 1]  # Map label to object
++   
++   grob <- rasterGrob(t(apply(img_matrix, 2, rev)), interpolate = FALSE,
++                      width = unit(1, "npc"), height = unit(1, "npc"),
++                      gp = gpar(col = NULL, fill = gray.colors(256, start = 0, end = 1)))
++   
++   grid.newpage()
++   grid.draw(grob)
++   grid.text(label, y = unit(-0.05, "npc"), gp = gpar(fontsize = 12))
++ }
+> 
+> # Function to visualize multiple images in a grid without normalization
+> visualize_images_grid_no_normalization <- function(data, n_rows = 2, n_cols = 4) {
++   set.seed(123)  # For reproducibility
++   sampled_indices <- sample(1:nrow(data), n_rows * n_cols)
++   
++   grobs <- lapply(sampled_indices, function(index) {
++     img <- as.numeric(data[index, -1])  # Extract pixel values
++     img_matrix <- matrix(img, nrow = 28, ncol = 28, byrow = TRUE)
++     label <- objects[as.numeric(data[index, 1]) + 1]
++     
++     rasterGrob(t(apply(img_matrix, 2, rev)), interpolate = FALSE,
++                gp = gpar(col = NULL, fill = gray.colors(256, start = 0, end = 1)),
++                name = label)
++   })
++   
++   grid.arrange(grobs = grobs, nrow = n_rows, ncol = n_cols)
++ }
+> 
+> # Example usage with train_data (assumed to be loaded)
+> visualize_images_grid_no_normalization(train_data, n_rows = 2, n_cols = 4)
+Error in rgb(tx, tx, tx, maxColorValue = max) : 
+  color intensity 26, not in [0,1]
+> plot_single_image_no_normalization <- function(data, index) {
++   img <- as.numeric(data[index, -1])  # Extract pixel values (0–255)
++   img_scaled <- img / 255  # Scale pixel values to [0, 1]
++   img_matrix <- matrix(img_scaled, nrow = 28, ncol = 28, byrow = TRUE)
++   label <- objects[as.numeric(data[index, 1]) + 1]  # Map label to object
++   
++   grob <- rasterGrob(t(apply(img_matrix, 2, rev)), interpolate = FALSE,
++                      width = unit(1, "npc"), height = unit(1, "npc"),
++                      gp = gpar(col = NULL, fill = gray.colors(256, start = 0, end = 1)))
++   
++   grid.newpage()
++   grid.draw(grob)
++   grid.text(label, y = unit(-0.05, "npc"), gp = gpar(fontsize = 12))
++ }
+> 
+> visualize_images_grid_no_normalization <- function(data, n_rows = 2, n_cols = 4) {
++   set.seed(123)  
++   sampled_indices <- sample(1:nrow(data), n_rows * n_cols)
++   
++   grobs <- lapply(sampled_indices, function(index) {
++     img <- as.numeric(data[index, -1])  
++     img_scaled <- img / 255  
++     img_matrix <- matrix(img_scaled, nrow = 28, ncol = 28, byrow = TRUE)
++     label <- objects[as.numeric(data[index, 1]) + 1]
++     
++     rasterGrob(t(apply(img_matrix, 2, rev)), interpolate = FALSE,
++                gp = gpar(col = NULL, fill = gray.colors(256, start = 0, end = 1)),
++                name = label)
++   })
++   
++   grid.arrange(grobs = grobs, nrow = n_rows, ncol = n_cols)
++ }
+> 
+> visualize_images_grid_no_normalization(train_data, n_rows = 2, n_cols = 4)
+> objects <- c('T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
++              'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot')
+> 
+> options(repr.plot.width = 10, repr.plot.height = 10)
+> par(mfcol = c(10, 10))
+> par(mar = c(0, 0, 1.5, 0), xaxs = 'i', yaxs = 'i')
+> 
+> for (i in 1:30) {
++   img <- as.numeric(train_data[i, -1]) / 255
++   img_matrix <- matrix(img, nrow = 28, ncol = 28, byrow = TRUE)
++   img_matrix <- t(apply(img_matrix, 2, rev))
++   label <- objects[as.numeric(train_data[i, 1]) + 1]
++   image(1:28, 1:28, img_matrix, col = gray((0:255) / 255), xaxt = 'n', yaxt = 'n', main = label, cex.main = 0.8)
++ }
+> cat("Dimensions of train data: ", dim(train_data), "\n")
+Dimensions of train data:  60000 785 
+> cat("Dimensions of test data: ", dim(test_data), "\n")
+Dimensions of test data:  10000 785 
+> na_count_train <- sum(is.na(train_data))
+> na_count_test <- sum(is.na(test_data))
+> cat("Number of missing values in train data:", na_count_train, "\n")
+Number of missing values in train data: 0 
+> cat("Number of missing values in test data:", na_count_test, "\n")
+Number of missing values in test data: 0 
+> duplicate_count_train <- nrow(train_data) - nrow(unique(train_data))
+> duplicate_count_test <- nrow(test_data) - nrow(unique(test_data))
+> cat("Number of duplicate rows in train data:", duplicate_count_train, "\n")
+Number of duplicate rows in train data: 43 
+> cat("Number of duplicate rows in test data:", duplicate_count_test, "\n")
+Number of duplicate rows in test data: 1 
