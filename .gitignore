@@ -8,7 +8,9 @@
 #
 /data/raw/*.csv
 /data/processed/*.csv
-
+/data/../*.csv
+/*.pdf
+/report/*.pdf
 # User-specific files
 .Ruserdata
 
