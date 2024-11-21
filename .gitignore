@@ -8,7 +8,7 @@
 #
 /data/raw/*.csv
 /data/processed/*.csv
-/data/../*.csv
+/data/prepared/*.csv
 /*.pdf
 /report/*.pdf
 # User-specific files
