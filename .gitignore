@@ -5,12 +5,13 @@
 # Session Data files
 .RData
 .RDataTmp
-#
-/data/raw/*.csv
-/data/processed/*.csv
-/data/prepared/*.csv
-/*.pdf
-/report/*.pdf
+
+# Ignore all CSV files in /data and its subdirectories
+/data/**/*.csv
+
+# Ignore all CSV files in /models and its subdirectories
+/models/**/*.csv
+
 # User-specific files
 .Ruserdata
 
@@ -52,3 +53,11 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Ignore all PDFs in the report directory
+/report/*.pdf
+
+# Ignore all temporary files from the data pipeline
+/data/raw/*.csv
+/data/processed/*.csv
+/data/prepared/*.csv
