@@ -141,9 +141,9 @@ project/
 | Name                 | Student ID  |
 |----------------------|-------------|
 | Jihane Essakhi       | 24004461    |
-| [Name 2]             | [ID 2]      |
+| Merjen Porrykova     | 20001844    |
 | Syed Fahim Hussain   | 22009863    |
-| [Name 4]             | [ID 4]      |
+| Ukibayeva Yerkezhan  | 24006721    |
 
 ---
 
