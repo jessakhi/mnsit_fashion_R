@@ -11,7 +11,7 @@
 
 # Ignore all CSV files in /models and its subdirectories
 /models/**/*.csv
-
+/report/**/*.csv
 # User-specific files
 .Ruserdata
 
