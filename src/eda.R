@@ -1,31 +1,3 @@
-# EDA ---------------------------------------------------
-
-
-if (!require(dplyr)) install.packages("dplyr")
-if (!require(ggplot2)) install.packages("ggplot2")
-if (!require(data.table)) install.packages("data.table")
-if (!require(gridExtra)) install.packages("gridExtra")
-if (!require(grid)) install.packages("grid")
-if (!require(reshape2)) install.packages("reshape2")
-if (!require(Rtsne)) install.packages("Rtsne")
-if (!require(corrplot)) install.packages("corrplot")
-if (!require(heatmaply)) install.packages("heatmaply")
-if (!require(plotly)) install.packages("plotly")
-if (!require(FactoMineR)) install.packages("FactoMineR")
-if (!require(factoextra)) install.packages("factoextra")
-
-library(ggplot2)
-library(plotly)
-library(FactoMineR)
-library(factoextra)
-library(heatmaply)
-library(dplyr)
-library(ggplot2)
-library(data.table)
-library(gridExtra)
-library(grid)
-library(reshape2)
-library(Rtsne)
 
 #-------------------------------------------------------------------
 

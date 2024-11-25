@@ -1,43 +1,32 @@
-# Main Script for Running the Project Pipeline
-# -----------------------------------------------------------------------------
+# Install and load all required libraries
+required_packages <- c(
+  "caret", "pROC", "ggplot2", "randomForest", "glmnet", "doParallel", "ranger", 
+  "rpart", "xgboost", "dplyr", "data.table", "reshape2", "imager", "FactoMineR", 
+  "gridExtra", "grid", "Rtsne", "corrplot", "heatmaply", "plotly", "factoextra", 
+  "rstudioapi"
+)
 
-if (!require(data.table)) install.packages("data.table")
-if (!require(rstudioapi)) install.packages("rstudioapi")
+for (pkg in required_packages) {
+  if (!require(pkg, character.only = TRUE)) {
+    install.packages(pkg, dependencies = TRUE)
+  }
+  library(pkg, character.only = TRUE)
+}
 
-library(data.table)
-library(rstudioapi)
+# Set working directory
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 setwd("..")
 
-# ----------------------------------------------------------------------------- 
-# Step 1: Data Cleaning
-cat("\nStep 1: Data Cleaning\n")
-source("src/data_cleaning.R")
-cat("\nData cleaning completed successfully!\n")
 
-# ----------------------------------------------------------------------------- 
-# Step 2: Exploratory Data Analysis (EDA)
-cat("\nStep 2: Exploratory Data Analysis\n")
-source("src/eda.R")
-cat("\nEDA completed successfully!\n")
+img_dir <- "report/img"
+if (!dir.exists(img_dir)) dir.create(img_dir, recursive = TRUE)
 
-# ----------------------------------------------------------------------------- 
-# Step 3: Feature Engineering
-cat("\nStep 3: Feature Engineering\n")
-source("src/feature_engineering.R")
-cat("\nFeature engineering completed successfully!\n")
+# Source all project scripts in the correct order
+source("data_cleaning.R")
+source("data_preparation.R")
+source("eda.R")
+source("feature_egineering.R")
+source("model_building.R")
+source("model_eval.R")
 
-# ----------------------------------------------------------------------------- 
-# Step 4: Model Building
-cat("\nStep 4: Model Building\n")
-source("src/model_building.R")
-cat("\nModel building completed successfully!\n")
-
-# ----------------------------------------------------------------------------- 
-# Step 5: Model Evaluation
-cat("\nStep 5: Model Evaluation\n")
-source("src/model_eval.R")
-cat("\nModel evaluation completed successfully!\n")
-
-# ----------------------------------------------------------------------------- 
-cat("\nPipeline execution completed successfully!\n")
+cat("Pipeline executed successfully. Outputs are saved in designated folders.")

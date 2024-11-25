@@ -1,8 +1,4 @@
-if (!require(dplyr)) install.packages("dplyr")
-if (!require(data.table)) install.packages("data.table")
 
-library(dplyr)
-library(data.table)
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) # Set to src/
 setwd("..")
