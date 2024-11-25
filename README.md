@@ -1,11 +1,10 @@
 
-
 # **MNIST Fashion Dataset Classification Project**
 
 ## **Overview**
 This project is part of the TEB2043/TFB2063/TEB2164 Data Science course at Universiti Teknologi PETRONAS. The goal is to classify clothing items from the MNIST Fashion dataset using machine learning models. The workflow demonstrates an end-to-end data science process, including data cleaning, preprocessing, exploratory analysis, modeling, and evaluation. 
 
-The models used are **Logistic Regression**, **K-Nearest Neighbors (KNN)**, and **Random Forest**, evaluated on metrics such as Accuracy, Precision, Recall, F1-Score, AUC, and Log Loss.
+The models used are **Logistic Regression**, **K-Nearest Neighbors (KNN)**, **Random Forest**, and **CART**, evaluated on metrics such as Accuracy, Precision, Recall, F1-Score, AUC, and Log Loss.
 
 ---
 
@@ -42,11 +41,14 @@ Available via [Kaggle](https://www.kaggle.com/zalando-research/fashionmnist) or 
    - Visualize class distributions and pixel intensity patterns.
    - Generate heatmaps, histograms, and sample visualizations.
 
-3. **Modeling**:
-   - Train Logistic Regression, KNN, and Random Forest classifiers.
+3. **Feature Engineering**:
+   - Engineer relevant features to enhance model performance.
+
+4. **Modeling**:
+   - Train Logistic Regression, KNN, Random Forest, and CART classifiers.
    - Optimize hyperparameters using grid search and cross-validation.
 
-4. **Evaluation**:
+5. **Evaluation**:
    - Compare models using metrics:
      - Accuracy
      - Precision
@@ -54,9 +56,15 @@ Available via [Kaggle](https://www.kaggle.com/zalando-research/fashionmnist) or 
      - F1-Score
      - AUC (Area Under the Curve)
      - Log Loss
+   - Visualize and save:
+     - Model accuracy comparison
+     - Processing time
+     - Precision vs Recall scatter plots
+     - Log Loss and AUC comparisons
+     - Confusion matrices
    - Analyze training and inference times.
 
-5. **Collaboration**:
+6. **Collaboration**:
    - Develop teamwork and task division among group members.
 
 ---
@@ -69,20 +77,34 @@ project/
 │   ├── data_preparation.R     # Flatten and normalize images
 │   ├── eda.R                  # Perform exploratory data analysis
 │   ├── feature_engineering.R  # Engineer features (if applicable)
-│   ├── model_building.R       # Train Logistic Regression, KNN, and Random Forest
+│   ├── model_building.R       # Train Logistic Regression, KNN, Random Forest, and CART
 │   ├── model_eval.R           # Evaluate models and benchmark results
 │   └── main.R                 # Run the full pipeline
 ├── data/
 │   ├── raw/                   # Raw dataset files
 │   ├── processed/             # Cleaned and preprocessed data
-│   └── prepared/              # Flattened and normalized data for models
+│   ├── prepared/              # Flattened and normalized data for models
+│   └── engineered/            # Engineered datasets for advanced models
 ├── report/
-│   ├── report.tex             # Final report source (LaTeX)
-│   ├── insights.pdf           # Key insights and findings
-│   └── model_comparison.png   # Visualization of model performance
-├── README.md                  # Project documentation
-├── .gitignore                 # Files and directories to ignore in Git
-└── DS.zip                     # Final submission package
+│   ├── img/                   # Contains all visualizations and plots
+│   │   ├── accuracy_comparison.png
+│   │   ├── processing_time_comparison.png
+│   │   ├── precision_vs_recall.png
+│   │   ├── log_loss_by_model.png
+│   │   ├── logistic_confusion_matrix.png
+│   │   ├── knn_confusion_matrix.png
+│   │   ├── random_forest_confusion_matrix.png
+│   │   └── cart_confusion_matrix.png
+│   ├── model_benchmark_results.csv  # Final benchmark results
+│   ├── val_accuracies.csv           # Validation accuracies
+│   ├── insights.pdf                 # Key insights and findings
+│   └── report.tex                   # Latex
+├── models/                          # Saved trained models
+│   ├── trained_models.RData         # Logistic, KNN, RF, and CART models
+│   └── mnist_data.RData             # Preprocessed datasets
+├── README.md                        # Project documentation
+├── .gitignore                       # Files and directories to ignore in Git
+└── DS.zip                           # Final submission package
 ```
 
 ---
@@ -95,7 +117,9 @@ project/
    ```
 2. Install required R packages:
    ```R
-   install.packages(c("keras", "ggplot2", "caret", "tidymodels", "data.table", "dplyr", "pROC", "randomForest", "reshape2"))
+   install.packages(c("keras", "ggplot2", "caret", "tidymodels", "data.table", "dplyr", 
+                      "pROC", "randomForest", "reshape2", "FactoMineR", "xgboost", 
+                      "gridExtra", "heatmaply", "plotly"))
    ```
 3. Execute the pipeline:
    ```R
@@ -119,6 +143,13 @@ project/
 - Hyperparameters:
   - `ntree`: Number of trees.
   - `mtry`: Number of features considered for splitting.
+
+### **4. CART (Classification and Regression Trees)**
+- A tree-based model that splits data based on decision rules to classify outcomes.
+- Hyperparameters:
+  - `cp`: Complexity parameter controlling tree pruning.
+
+---
 
 ### **Evaluation Metrics**
 - **Accuracy**: Overall correctness of predictions.
@@ -149,4 +180,6 @@ project/
 
 ## **Acknowledgments**
 The project uses the MNIST Fashion dataset provided by Zalando Research. We acknowledge the use of R libraries (`keras`, `ggplot2`, `caret`, etc.) and generative AI tools (ChatGPT, GitHub Copilot) for guidance and productivity enhancement.
+```
 
+---
