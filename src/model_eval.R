@@ -118,7 +118,6 @@ write.csv(benchmark_table, file = "model_benchmark_results.csv", row.names = FAL
 
 View(benchmark_table)
 
-library(ggplot2)
 
 plot_accuracy <- function(benchmark_table) {
   ggplot(benchmark_table, aes(x = Model, y = Accuracy, fill = Model)) +
@@ -130,5 +129,133 @@ plot_accuracy <- function(benchmark_table) {
 accuracy_plot <- plot_accuracy(benchmark_table)
 print(accuracy_plot)
 
-# Uncomment below to save the plot
+
 # ggsave("report/img/accuracy_comparison.png", plot = accuracy_plot, width = 8, height = 6)
+
+
+plot_processing_time <- function(benchmark_table) {
+  ggplot(benchmark_table, aes(x = Model, y = Processing_Time, fill = Model)) +
+    geom_bar(stat = "identity", color = "black") +
+    labs(title = "Processing Time Comparison", y = "Processing Time (s)", x = "Model") +
+    theme_minimal()
+}
+
+processing_time_plot <- plot_processing_time(benchmark_table)
+print(processing_time_plot)
+
+
+# ggsave("report/img/processing_time_comparison.png", plot = processing_time_plot, width = 8, height = 6)
+
+
+# Precision vs. Recall Scatter Plot
+plot_precision_recall <- function(benchmark_table) {
+  ggplot(benchmark_table, aes(x = Precision, y = Recall, color = Model, label = Model)) +
+    geom_point(size = 4) +
+    geom_text(vjust = -0.5) +
+    labs(title = "Precision vs Recall", x = "Precision", y = "Recall") +
+    theme_minimal()
+}
+
+precision_recall_plot <- plot_precision_recall(benchmark_table)
+print(precision_recall_plot)
+
+
+# ggsave("report/img/precision_vs_recall.png", plot = precision_recall_plot, width = 8, height = 6)
+
+# Mean AUC Comparison
+plot_mean_auc <- function(benchmark_table) {
+  ggplot(benchmark_table, aes(x = Model, y = Mean_AUC, fill = Model)) +
+    geom_bar(stat = "identity", color = "black") +
+    labs(title = "Mean AUC Comparison", y = "Mean AUC", x = "Model") +
+    theme_minimal()
+}
+
+mean_auc_plot <- plot_mean_auc(benchmark_table)
+print(mean_auc_plot)
+
+
+# ggsave("report/img/mean_auc_comparison.png", plot = mean_auc_plot, width = 8, height = 6)
+
+# Log Loss Comparison
+plot_log_loss <- function(benchmark_table) {
+  ggplot(benchmark_table, aes(x = Model, y = Log_Loss, fill = Model)) +
+    geom_bar(stat = "identity", color = "black") +
+    labs(title = "Log Loss Comparison", y = "Log Loss", x = "Model") +
+    theme_minimal()
+}
+
+log_loss_plot <- plot_log_loss(benchmark_table)
+print(log_loss_plot)
+
+
+# ggsave("report/img/log_loss_comparison.png", plot = log_loss_plot, width = 8, height = 6)
+
+
+
+# Function: Log Loss Across Predictions (Line Plot)
+plot_log_loss_predictions <- function(model_name, true_labels, predicted_probs, save_path) {
+  log_loss_values <- -rowSums(model.matrix(~ factor(true_labels) - 1) * log(predicted_probs + 1e-15))
+  log_loss_df <- data.frame(
+    Prediction_Index = seq_along(log_loss_values),
+    Log_Loss = log_loss_values
+  )
+  p <- ggplot(log_loss_df, aes(x = Prediction_Index, y = Log_Loss)) +
+    geom_line(color = "blue") +
+    labs(title = paste(model_name, "- Log Loss Across Predictions"),
+         x = "Prediction Index", y = "Log Loss") +
+    theme_minimal()
+  ggsave(save_path, plot = p, width = 8, height = 6)
+}
+
+# Function: Log Loss by Class (Bar Plot)
+plot_log_loss_by_class <- function(model_name, true_labels, predicted_probs, save_path) {
+  true_labels_onehot <- model.matrix(~ factor(true_labels) - 1)
+  log_loss_per_class <- colMeans(-true_labels_onehot * log(predicted_probs + 1e-15), na.rm = TRUE)
+  log_loss_df <- data.frame(
+    Class = colnames(predicted_probs),
+    Log_Loss = log_loss_per_class
+  )
+  p <- ggplot(log_loss_df, aes(x = reorder(Class, Log_Loss), y = Log_Loss, fill = Class)) +
+    geom_bar(stat = "identity", color = "black") +
+    labs(title = paste(model_name, "- Log Loss by Class"),
+         x = "Class", y = "Log Loss") +
+    theme_minimal()
+  ggsave(save_path, plot = p, width = 8, height = 6)
+}
+
+# Generate Plots for Each Model
+plot_log_loss_predictions(
+  "Logistic Regression", test_labels, logistic_probs,
+  file.path(img_dir, "logistic_log_loss_predictions.png")
+)
+plot_log_loss_by_class(
+  "Logistic Regression", test_labels, logistic_probs,
+  file.path(img_dir, "logistic_log_loss_by_class.png")
+)
+
+plot_log_loss_predictions(
+  "KNN", test_labels, knn_probs,
+  file.path(img_dir, "knn_log_loss_predictions.png")
+)
+plot_log_loss_by_class(
+  "KNN", test_labels, knn_probs,
+  file.path(img_dir, "knn_log_loss_by_class.png")
+)
+
+plot_log_loss_predictions(
+  "Random Forest", test_labels, rf_probs,
+  file.path(img_dir, "rf_log_loss_predictions.png")
+)
+plot_log_loss_by_class(
+  "Random Forest", test_labels, rf_probs,
+  file.path(img_dir, "rf_log_loss_by_class.png")
+)
+
+plot_log_loss_predictions(
+  "CART", test_labels, cart_probs,
+  file.path(img_dir, "cart_log_loss_predictions.png")
+)
+plot_log_loss_by_class(
+  "CART", test_labels, cart_probs,
+  file.path(img_dir, "cart_log_loss_by_class.png")
+)
