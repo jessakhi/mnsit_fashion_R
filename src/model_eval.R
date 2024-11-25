@@ -1,17 +1,8 @@
-if (!require(caret)) install.packages("caret")
-if (!require(pROC)) install.packages("pROC")
-if (!require(ggplot2)) install.packages("ggplot2")
-if (!require(randomForest)) install.packages("randomForest")
 
-library(caret)
-library(pROC)
-library(ggplot2)
-library(randomForest)
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 setwd("..")
 
-# Ensure the directory for images exists
 img_dir <- "report/img"
 if (!dir.exists(img_dir)) dir.create(img_dir, recursive = TRUE)
 

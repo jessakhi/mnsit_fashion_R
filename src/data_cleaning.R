@@ -1,12 +1,4 @@
-if (!require(dplyr)) install.packages("dplyr")
-if (!require(caret)) install.packages("caret")
-if (!require(data.table)) install.packages("data.table")
-if (!require(rstudioapi)) install.packages("rstudioapi")
 
-library(dplyr)
-library(caret)
-library(data.table)
-library(rstudioapi)
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) # Set to src/
 setwd("..") 

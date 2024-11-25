@@ -1,16 +1,4 @@
-if (!require(dplyr)) install.packages("dplyr")
-if (!require(data.table)) install.packages("data.table")
-if (!require(caret)) install.packages("caret")
-if (!require(reshape2)) install.packages("reshape2")
-if (!require(imager)) install.packages("imager")
-if (!require(FactoMineR)) install.packages("FactoMineR")
 
-library(dplyr)
-library(data.table)
-library(caret)
-library(reshape2)
-library(imager)
-library(FactoMineR)
 
 gc()
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))

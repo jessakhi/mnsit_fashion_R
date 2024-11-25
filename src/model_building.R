@@ -1,31 +1,16 @@
-# Install and load necessary packages
-if (!require(caret)) install.packages("caret", dependencies = TRUE)
-if (!require(glmnet)) install.packages("glmnet", dependencies = TRUE)
-if (!require(doParallel)) install.packages("doParallel", dependencies = TRUE)
-if (!require(ranger)) install.packages("ranger", dependencies = TRUE)
-if (!require(rpart)) install.packages("rpart", dependencies = TRUE)
-if (!require(xgboost)) install.packages("xgboost", dependencies = TRUE)
 
-library(caret)
-library(glmnet)
-library(doParallel)
-library(ranger)
-library(rpart)
-library(xgboost)
-
-# Set up parallel processing
 cl <- makeCluster(detectCores() - 1)
 registerDoParallel(cl)
 
 set.seed(123)
 
-# Load engineered datasets
+
 engineered_dir <- "data/engineered"
 train_data <- read.csv(file.path(engineered_dir, "train_flat_engineered.csv"))
 val_data <- read.csv(file.path(engineered_dir, "val_flat_engineered.csv"))
 test_data <- read.csv(file.path(engineered_dir, "test_flat_engineered.csv"))
 
-# Prepare data
+
 train_data$label <- factor(make.names(train_data$label))
 val_data$label <- factor(make.names(val_data$label))
 test_labels <- factor(make.names(test_data$label))
@@ -42,7 +27,6 @@ control <- trainControl(
 metric <- "Accuracy"
 processing_times <- list()
 
-# Logistic Regression with Elastic Net Regularization
 start_time <- Sys.time()
 logistic_model <- train(
   label ~ ., 
@@ -51,8 +35,8 @@ logistic_model <- train(
   metric = metric, 
   trControl = control,
   tuneGrid = expand.grid(
-    alpha = 0.5,     # Elastic Net mixing parameter
-    lambda = 0.01    # Regularization parameter
+    alpha = 0.5,     
+    lambda = 0.01    
   )
 )
 processing_times$logistic_model <- Sys.time() - start_time
@@ -92,9 +76,9 @@ rf_model <- train(
   tuneGrid = expand.grid(
     mtry = floor(sqrt(ncol(train_data) - 1)),  # Number of variables randomly sampled
     splitrule = "gini",  # Splitting rule
-    min.node.size = 1    # Minimum size of terminal nodes
+    min.node.size = 1    
   ),
-  num.trees = 100  # Number of trees
+  num.trees = 100  
 )
 processing_times$rf_model <- Sys.time() - start_time
 
@@ -131,13 +115,13 @@ xgb_model <- train(
   metric = metric, 
   trControl = control,
   tuneGrid = expand.grid(
-    nrounds = 100,         # Number of boosting rounds
-    max_depth = 6,         # Maximum depth of a tree
-    eta = 0.1,             # Learning rate
-    gamma = 0,             # Minimum loss reduction
-    colsample_bytree = 0.8,# Subsample ratio of columns
-    min_child_weight = 1,  # Minimum sum of instance weight
-    subsample = 0.8        # Subsample ratio of training instances
+    nrounds = 100,         
+    max_depth = 6,
+    eta = 0.1,
+    gamma = 0,
+    colsample_bytree = 0.8,
+    min_child_weight = 1,  
+    subsample = 0.8       
   )
 )
 processing_times$xgb_model <- Sys.time() - start_time
@@ -161,7 +145,7 @@ save(test_data, test_labels, val_data, file = "models/mnist_data.RData")
 stopCluster(cl)
 registerDoSEQ()
 
-# Summarize validation accuracies
+
 val_accuracies <- data.frame(
   Model = c("Logistic Regression", "KNN", "Random Forest", "CART", "XGBoost"),
   Validation_Accuracy = c(logistic_val_accuracy, knn_val_accuracy, rf_val_accuracy, cart_val_accuracy, xgb_val_accuracy)
