@@ -8,12 +8,19 @@ library(pROC)
 library(ggplot2)
 library(randomForest)
 
-gc()
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 setwd("..")
 
-load("models/trained_models.RData")
-load("models/mnist_data.RData")
+# Ensure the directory for images exists
+img_dir <- "report/img"
+if (!dir.exists(img_dir)) dir.create(img_dir, recursive = TRUE)
+
+if (file.exists("models/trained_models.RData")) {
+  load("models/trained_models.RData")
+  load("models/mnist_data.RData")
+} else {
+  stop("Required files not found.")
+}
 
 benchmark_models <- function(model_name, true_labels, predicted_probs, predicted_labels, processing_time) {
   cm <- confusionMatrix(factor(predicted_labels), factor(true_labels))
@@ -27,29 +34,45 @@ benchmark_models <- function(model_name, true_labels, predicted_probs, predicted
     roc(as.numeric(true_labels == colnames(predicted_probs)[class]), predicted_probs[, class])
   })
   auc_values <- sapply(roc_curves, auc)
-  mean_auc <- mean(auc_values, na.rm = TRUE)
-  plot(roc_curves[[1]], col = "blue", main = paste("ROC Curves -", model_name), legacy.axes = TRUE)
-  for (i in 2:length(roc_curves)) {
-    plot(roc_curves[[i]], col = i, add = TRUE)
-  }
-  legend("bottomright", legend = colnames(predicted_probs), col = 1:ncol(predicted_probs), lty = 1)
-  cm_table <- as.data.frame(cm$table)
-  ggplot(cm_table, aes(x = Reference, y = Prediction, fill = Freq)) +
-    geom_tile() +
-    scale_fill_gradient(low = "white", high = "blue") +
-    ggtitle(paste("Confusion Matrix -", model_name)) +
-    theme_minimal() +
-    labs(x = "True Labels", y = "Predicted Labels")
-  return(list(
+  list(
     model = model_name,
+    cm = cm,
     accuracy = accuracy,
     precision = precision,
     recall = recall,
     f1_score = f1_score,
-    mean_auc = mean_auc,
+    mean_auc = mean(auc_values, na.rm = TRUE),
     log_loss = log_loss,
-    processing_time = processing_time
-  ))
+    processing_time = processing_time,
+    roc_curves = roc_curves
+  )
+}
+
+save_individual_roc <- function(model_name, roc_curves, save_dir) {
+  for (i in seq_along(roc_curves)) {
+    save_path <- file.path(save_dir, paste0(model_name, "_ROC_Class_", i, ".png"))
+    png(save_path, width = 800, height = 600)
+    plot(roc_curves[[i]], main = paste(model_name, "- ROC Curve for Class", i), legacy.axes = TRUE)
+    dev.off()
+  }
+}
+
+save_confusion_matrix <- function(cm, model_name, save_path) {
+  cm_table <- as.data.frame(cm$table)
+  p <- ggplot(cm_table, aes(x = Reference, y = Prediction, fill = Freq)) +
+    geom_tile() +
+    scale_fill_gradient(low = "white", high = "blue") +
+    labs(title = paste(model_name, "- Confusion Matrix"), x = "True Labels", y = "Predicted Labels") +
+    theme_minimal()
+  ggsave(save_path, plot = p, width = 8, height = 6)
+}
+
+save_f1_scores <- function(benchmark_table, save_path) {
+  p <- ggplot(benchmark_table, aes(x = Model, y = F1_Score, fill = Model)) +
+    geom_bar(stat = "identity", color = "black") +
+    labs(title = "F1-Score Comparison", y = "F1-Score", x = "Model") +
+    theme_minimal()
+  ggsave(save_path, plot = p, width = 8, height = 6)
 }
 
 logistic_probs <- predict(logistic_model, test_data, type = "prob")
@@ -79,13 +102,33 @@ benchmark_table <- data.frame(
   Processing_Time = c(logistic_eval$processing_time, knn_eval$processing_time, rf_eval$processing_time, cart_eval$processing_time)
 )
 
-ggplot(benchmark_table, aes(x = Model, y = Accuracy, fill = Model)) +
-  geom_bar(stat = "identity", color = "black") +
-  ggtitle("Model Accuracy Comparison") +
-  theme_minimal() +
-  labs(y = "Accuracy", x = "Model")
+save_individual_roc("Logistic_Regression", logistic_eval$roc_curves, img_dir)
+save_individual_roc("KNN", knn_eval$roc_curves, img_dir)
+save_individual_roc("Random_Forest", rf_eval$roc_curves, img_dir)
+save_individual_roc("CART", cart_eval$roc_curves, img_dir)
 
-print(benchmark_table)
+save_confusion_matrix(logistic_eval$cm, "Logistic Regression", file.path(img_dir, "logistic_confusion_matrix.png"))
+save_confusion_matrix(knn_eval$cm, "KNN", file.path(img_dir, "knn_confusion_matrix.png"))
+save_confusion_matrix(rf_eval$cm, "Random Forest", file.path(img_dir, "rf_confusion_matrix.png"))
+save_confusion_matrix(cart_eval$cm, "CART", file.path(img_dir, "cart_confusion_matrix.png"))
+
+save_f1_scores(benchmark_table, file.path(img_dir, "f1_scores.png"))
+
 write.csv(benchmark_table, file = "model_benchmark_results.csv", row.names = FALSE)
 
 View(benchmark_table)
+
+library(ggplot2)
+
+plot_accuracy <- function(benchmark_table) {
+  ggplot(benchmark_table, aes(x = Model, y = Accuracy, fill = Model)) +
+    geom_bar(stat = "identity", color = "black") +
+    labs(title = "Accuracy Comparison", y = "Accuracy", x = "Model") +
+    theme_minimal()
+}
+
+accuracy_plot <- plot_accuracy(benchmark_table)
+print(accuracy_plot)
+
+# Uncomment below to save the plot
+# ggsave("report/img/accuracy_comparison.png", plot = accuracy_plot, width = 8, height = 6)

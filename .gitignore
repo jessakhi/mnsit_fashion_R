@@ -5,13 +5,13 @@
 # Session Data files
 .RData
 .RDataTmp
-
+/models/*.RData
 # Ignore all CSV files in /data and its subdirectories
 /data/**/*.csv
 
 # Ignore all CSV files in /models and its subdirectories
 /models/**/*.csv
-
+/report/**/*.csv
 # User-specific files
 .Ruserdata
 
