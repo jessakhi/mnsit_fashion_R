@@ -5,7 +5,7 @@
 # Session Data files
 .RData
 .RDataTmp
-
+/models/*.RData
 # Ignore all CSV files in /data and its subdirectories
 /data/**/*.csv
 
