@@ -189,3 +189,4 @@ for (i in 1:nrow(average_images)) {
   image(1:28, 1:28, avg_matrix, col = gray((0:255) / 255), xaxt = 'n', yaxt = 'n', main = label, cex.main = 0.8)
 }
 
+rm(list = ls())
